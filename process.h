@@ -1,6 +1,6 @@
 #pragma once
 #include"resource.h"
-enum pstatus { ready, block, running };//½ø³Ì×´Ì¬£ºready£º¾ÍĞ÷Ì¬£»block£º×èÈûÌ¬£»running£ºÔËĞĞÌ¬
+enum pstatus { ready, block, running };//è¿›ç¨‹çŠ¶æ€ï¼šreadyï¼šå°±ç»ªæ€ï¼›blockï¼šé˜»å¡æ€ï¼›runningï¼šè¿è¡Œæ€
 
 typedef struct OTHER_RESOURSE {
 	resource* r;
@@ -15,7 +15,7 @@ typedef struct OTHER_RESOURSE {
 }OTHER_RESOURSE;
 
 bool operator ==(OTHER_RESOURSE& a, OTHER_RESOURSE& b) {
-	return a.r = b.r;
+	return a.r == b.r;
 }
 
 class process {
@@ -23,13 +23,13 @@ private:
 
 public:
 	process(const std::string& id, const unsigned int& riority);
-	std::string pid = "";//½ø³Ì±êÊ¶
-	std::vector<OTHER_RESOURSE> other_resources;//Õ¼ÓÃµÄ×ÊÔ´
-	pstatus status;//½ø³ÌµÄ×´Ì¬
-	process* father = NULL, * brother = NULL, * children = NULL;//Éú³ÉÊ÷½Úµã
-	resource* block_flag = NULL;//±ê¼Ç½øÈë×èÈû×´Ì¬ËùµÈ´ıµÄ×ÊÔ´
-	unsigned int block_num = 0;//±ê¼ÇµÈ´ıµÄ×ÊÔ´ÊıÁ¿
-	unsigned int priority = 0;//½ø³ÌÀàĞÍ£ºinit=0£º³õÊ¼½ø³Ì£»user_level=1£ºÓÃ»§¼¶½ø³Ì£»kernel_level=2£ºÄÚºË¼¶½ø³Ì
+	std::string pid = "";//è¿›ç¨‹æ ‡è¯†
+	std::vector<OTHER_RESOURSE> other_resources;//å ç”¨çš„èµ„æº
+	pstatus status;//è¿›ç¨‹çš„çŠ¶æ€
+	process* father = NULL, * brother = NULL, * children = NULL;//ç”Ÿæˆæ ‘èŠ‚ç‚¹
+	resource* block_flag = NULL;//æ ‡è®°è¿›å…¥é˜»å¡çŠ¶æ€æ‰€ç­‰å¾…çš„èµ„æº
+	unsigned int block_num = 0;//æ ‡è®°ç­‰å¾…çš„èµ„æºæ•°é‡
+	unsigned int priority = 0;//è¿›ç¨‹ç±»å‹ï¼šinit=0ï¼šåˆå§‹è¿›ç¨‹ï¼›user_level=1ï¼šç”¨æˆ·çº§è¿›ç¨‹ï¼›kernel_level=2ï¼šå†…æ ¸çº§è¿›ç¨‹
 
 	process& operator =(const process& p) {
 		if (this != &p) {
