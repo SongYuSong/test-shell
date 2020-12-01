@@ -189,12 +189,12 @@ public:
 				}
 			}
 			if (i == p->other_resources.size()) {
-				std::cout << "process " << p->pid << " doesn't have this reservice.\n";
+				std::cout << "process " << p->pid << " doesn't have this resource.\n";
 				return false;
 			}
 		}
 		else {
-			std::cout << "process " << p->pid << " doesn't have any reservice.\n";
+			std::cout << "process " << p->pid << " doesn't have any resource.\n";
 			return false;
 		}
 		return false;
