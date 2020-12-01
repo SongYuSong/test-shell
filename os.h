@@ -16,19 +16,7 @@ private:
 	resource r4 = { "r4",4,4 };
 	std::vector<process*> ready_list[3], running_list, block_list;
 	std::vector<resource*> resource_list = { &r1,&r2,&r3,&r4 };
-	void Scheduler() {
-		for (int i = 2; running_list.empty() && i >= 0; i--) {
-			if (!ready_list[i].empty()) {
-				running_list.push_back(ready_list[i].front());
-				ready_list[i].front()->status = running;
-				if (ready_list[i].size() == 1)
-					ready_list[i].clear();
-				else
-					ready_list[i].erase(ready_list[i].begin());
-				break;
-			}
-		}
-	}
+	void Scheduler();
 	void Kill_Brother(process* p) {
 		if (p->brother)
 			p->brother = NULL;
@@ -43,19 +31,19 @@ private:
 		}
 	}
 	void Empty_Resource(process* p) {
-		while (!p->other_resources.empty())//½«½ø³ÌËùÕ¼¾İµÄ×ÊÔ´ÊÍ·Å³öÀ´
+		while (!p->other_resources.empty())//å°†è¿›ç¨‹æ‰€å æ®çš„èµ„æºé‡Šæ”¾å‡ºæ¥
 		{
 			Release(p, *p->other_resources.front().r, p->other_resources.front().rnum);
 		}
 		p->other_resources.clear();
 	}
 	void Remove_List(process* p) {
-		switch (p->status)//½«½ø³Ì´Ó¶ÔÓ¦µÄ×´Ì¬¶ÓÁĞÖĞÒÆ³ı
+		switch (p->status)//å°†è¿›ç¨‹ä»å¯¹åº”çš„çŠ¶æ€é˜Ÿåˆ—ä¸­ç§»é™¤
 		{
 		case ready:
 			Remove(ready_list[p->priority], p);
 			break;
-		case block://µ±½ø³Ì´¦ÓÚ×èÈû×´Ì¬Ê±£¬¼ÇµÃ½«Æä´ÓµÈ´ı×ÊÔ´µÄµÈ´ı¶ÓÁĞÖĞÒÆ³ı¡£
+		case block://å½“è¿›ç¨‹å¤„äºé˜»å¡çŠ¶æ€æ—¶ï¼Œè®°å¾—å°†å…¶ä»ç­‰å¾…èµ„æºçš„ç­‰å¾…é˜Ÿåˆ—ä¸­ç§»é™¤ã€‚
 			Remove(p->block_flag->waiting_list, p->pid);
 			Remove(block_list, p);
 			break;
@@ -77,7 +65,7 @@ private:
 			delete(p);
 		}
 	}
-	//ÏÔÊ¾¶ÓÁĞÄÚÈİ
+	//æ˜¾ç¤ºé˜Ÿåˆ—å†…å®¹
 	void Display_Vector(std::vector<process*>& list) {
 		for (unsigned int i = 0; i < list.size(); i++) {
 			std::cout << list[i]->pid << " ";
@@ -91,14 +79,14 @@ private:
 		}
 		std::cout << std::endl;
 	}
-	//Í¬ÉÏ
+	//åŒä¸Š
 	void Display_Vector(std::vector<std::string>& list) {
 		for (unsigned int i = 0; i < list.size(); i++) {
 			std::cout << list[i] << " ";
 		}
 		std::cout << std::endl;
 	}
-	//pid¼ìË÷½ø³Ì
+	//pidæ£€ç´¢è¿›ç¨‹
 	process* pid2p(const std::string& pid, std::vector<process*>& list) {
 		unsigned int i = 0;
 		for (i; i < list.size(); i++) {
@@ -112,12 +100,12 @@ private:
 		else
 			return NULL;
 	}
-	//ÊÍ·Å×ÊÔ´
-	void Release(process* p, resource& r, const unsigned int& n) {//×ÊÔ´ÊÍ·Å
+	//é‡Šæ”¾èµ„æº
+	void Release(process* p, resource& r, const unsigned int& n) {//èµ„æºé‡Šæ”¾
 		OTHER_RESOURSE o_r = { &r,n };
-		Remove(p->other_resources, o_r);//½«×ÊÔ´´Ó½ø³ÌµÄÕ¼ÓÃ×ÊÔ´ÁĞ±íÖĞÒÆ³ı
+		Remove(p->other_resources, o_r);//å°†èµ„æºä»è¿›ç¨‹çš„å ç”¨èµ„æºåˆ—è¡¨ä¸­ç§»é™¤
 		o_r.r->status += o_r.rnum;
-		while (r.waiting_list.size() != 0) {//Èç¹û×ÊÔ´µÄµÈ´ı¶ÓÁĞ·Ç¿Õ£¬½«·ÃÎÊÁĞ±íÍ·²¿µÄ½ø³Ì£¬½«Æä´Ó×èÈû¶ÓÁĞÖĞÒÆ³ı£¬·ÅÈë¾ÍĞ÷¶ÓÁĞ
+		while (r.waiting_list.size() != 0) {//å¦‚æœèµ„æºçš„ç­‰å¾…é˜Ÿåˆ—éç©ºï¼Œå°†è®¿é—®åˆ—è¡¨å¤´éƒ¨çš„è¿›ç¨‹ï¼Œå°†å…¶ä»é˜»å¡é˜Ÿåˆ—ä¸­ç§»é™¤ï¼Œæ”¾å…¥å°±ç»ªé˜Ÿåˆ—
 			process* pr = pid2p(o_r.r->waiting_list.front(), block_list);
 			if (pr->block_num <= o_r.r->status) {
 				o_r.r->waiting_list.erase(o_r.r->waiting_list.begin());
@@ -134,7 +122,7 @@ private:
 		Scheduler();
 	}
 public:
-	//Í¨¹ıpidË÷Òı½ø³Ì
+	//é€šè¿‡pidç´¢å¼•è¿›ç¨‹
 	process* pid2p(const std::string& pid) {
 		process* p = NULL;
 		for (int i = 0; i < 3; i++) {
@@ -148,7 +136,7 @@ public:
 			p = pid2p(pid, block_list);
 		return p;
 	}
-	//Í¨¹ıridË÷Òı×ÊÔ´
+	//é€šè¿‡ridç´¢å¼•èµ„æº
 	resource* rid2r(std::string& rid) {
 		unsigned short i = 0;
 		for (i; i < resource_list.size(); i++) {
@@ -162,21 +150,21 @@ public:
 		else
 			return NULL;
 	}
-	//ÇëÇó×ÊÔ´
-	bool Request(resource& r, const unsigned int& n) {//×ÊÔ´ÉêÇë
+	//è¯·æ±‚èµ„æº
+	bool Request(resource& r, const unsigned int& n) {//èµ„æºç”³è¯·
 		if (n > r.totalnum) {
 			std::cout << "The number of request exceeds the total.\n";
 			return false;
 		}
 		else {
 			process* p = running_list[0];
-			if (r.status >= n) {//Èç¹û×ÊÔ´rÓÉ¿ÕÏĞ£¬ÔòÎª½ø³Ì·ÖÅä
+			if (r.status >= n) {//å¦‚æœèµ„æºrç”±ç©ºé—²ï¼Œåˆ™ä¸ºè¿›ç¨‹åˆ†é…
 				r.status -= n;
-				p->other_resources.push_back({ &r,n });//½«¸Ã×ÊÔ´Ğ´Èë½ø³ÌpµÄÕ¼ÓÃ×ÊÔ´ÁĞ±íÖĞ
+				p->other_resources.push_back({ &r,n });//å°†è¯¥èµ„æºå†™å…¥è¿›ç¨‹pçš„å ç”¨èµ„æºåˆ—è¡¨ä¸­
 				Scheduler();
 				return true;
 			}
-			else {//Èç¹û¸Ã×ÊÔ´Ã»ÓĞÊ£ÓàÁË£¬½«¸Ã½ø³ÌµÄpidĞ´Èë×ÊÔ´µÄµÈ´ıÁĞ±í£¬²¢½«½ø³Ì×´Ì¬ÉèÖÃÎª×èÈû£¬²¢´ÓÔËĞĞ¶ÓÁĞÖĞÒÆ³ı£¬·ÅÈë×èÈû¶ÓÁĞÖĞ
+			else {//å¦‚æœè¯¥èµ„æºæ²¡æœ‰å‰©ä½™äº†ï¼Œå°†è¯¥è¿›ç¨‹çš„pidå†™å…¥èµ„æºçš„ç­‰å¾…åˆ—è¡¨ï¼Œå¹¶å°†è¿›ç¨‹çŠ¶æ€è®¾ç½®ä¸ºé˜»å¡ï¼Œå¹¶ä»è¿è¡Œé˜Ÿåˆ—ä¸­ç§»é™¤ï¼Œæ”¾å…¥é˜»å¡é˜Ÿåˆ—ä¸­
 				Remove(running_list, p);
 				r.waiting_list.push_back(p->pid);
 				p->status = block;
@@ -189,7 +177,7 @@ public:
 			}
 		}
 	}
-	//ÊÍ·Å×ÊÔ´
+	//é‡Šæ”¾èµ„æº
 	bool Release(resource& r, const unsigned int& n) {
 		process* p = running_list.front();
 		if (!p->other_resources.empty()) {
@@ -211,23 +199,22 @@ public:
 		}
 		return false;
 	}
-	//Ä£ÄâÖĞ¶Ï
-	void time_out() { //Ä£ÄâÖĞ¶Ï£ºÕÒµ½running_listÖĞµÄÍ·²¿½ø³Ì£¬½«ÆäÒÆ³ı·ÅÈëready_listÖĞ£¬½«½ø³ÌµÄ×´Ì¬µ÷ÕûÎª¾ÍĞ÷
+	//æ¨¡æ‹Ÿä¸­æ–­
+	void time_out() { //æ¨¡æ‹Ÿä¸­æ–­ï¼šæ‰¾åˆ°running_listä¸­çš„å¤´éƒ¨è¿›ç¨‹ï¼Œå°†å…¶ç§»é™¤æ”¾å…¥ready_listä¸­ï¼Œå°†è¿›ç¨‹çš„çŠ¶æ€è°ƒæ•´ä¸ºå°±ç»ª
 		for (int i = 2; i >= 0; i--) {
 			if (!ready_list[i].empty()) {
+				ready_list[i].front()->status = running;
 				running_list.push_back(ready_list[i].front());
 				ready_list[i].erase(ready_list[i].begin());
+				running_list.front()->status = ready;
+				ready_list[running_list.front()->priority].push_back(running_list.front());
+				running_list.erase(running_list.begin());
 				break;
 			}
 		}
-		process* p = running_list.front();
-		running_list.erase(running_list.begin());
-		p->status = ready;
-		ready_list[p->priority].push_back(p);
-		Scheduler();
 	}
-	//´´Ôì½ø³Ì
-	void Create(process* father_process, const std::string& pid, const unsigned int& priority) {//´´ÔìÒ»¸ö½ø³Ì£¬ÓĞÁ½¸öÖØÔØ£¬·Ö±ğÉú³É¸ù½ÚµãÓë×Ó½Úµã¡£
+	//åˆ›é€ è¿›ç¨‹
+	void Create(process* father_process, const std::string& pid, const unsigned int& priority) {//åˆ›é€ ä¸€ä¸ªè¿›ç¨‹ï¼Œæœ‰ä¸¤ä¸ªé‡è½½ï¼Œåˆ†åˆ«ç”Ÿæˆæ ¹èŠ‚ç‚¹ä¸å­èŠ‚ç‚¹ã€‚
 		if (pid2p(pid) == NULL) {
 			process* p = new process(pid, priority);
 			p->father = father_process;
@@ -247,12 +234,12 @@ public:
 		Scheduler();
 		return p;
 	}
-	//É¾³ı½ø³Ì
+	//åˆ é™¤è¿›ç¨‹
 	void Destory(process* p) {
 		Kill_Tree(p);
 		Scheduler();
 	}
-	//ÏÔÊ¾ËùÓĞ¶ÓÁĞµÄÄÚÈİ
+	//æ˜¾ç¤ºæ‰€æœ‰é˜Ÿåˆ—çš„å†…å®¹
 	void Display_list(const std::string& str) {
 		if (str == "") {
 			std::cout << "* ready_list[0]: ";
@@ -290,3 +277,18 @@ public:
 		}
 	}
 };
+void os::Scheduler() {
+	for (int i = 2; running_list.empty() && i >= 0; i--) {
+		if (!ready_list[i].empty()) {
+			running_list.push_back(ready_list[i].front());
+			ready_list[i].front()->status = running;
+			if (ready_list[i].size() == 1)
+				ready_list[i].clear();
+			else
+				ready_list[i].erase(ready_list[i].begin());
+			break;
+		}
+	}
+	if (!running_list.empty() && running_list.front()->priority == 0)
+		time_out();
+}
