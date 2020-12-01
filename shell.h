@@ -78,7 +78,7 @@ private:
 		case command::req: {
 			unsigned short i = 0;
 			for (unsigned short j = 0; j < operand2.size(); j++) {
-				i = i * 10 + operand2[j];
+				i = i * 10 + operand2[j] - 48;
 			}
 			if (os.Request(*os.rid2r(operand1), i)) {
 				std::cout << "* Resource request successful\n";
