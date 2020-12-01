@@ -41,5 +41,6 @@ void Display_list(const std::string& str);//在终端显示状态列表
 >>rel rid n  
 
 >>无论是申请资源还是释放资源，都只是当前正在运行的进程才可以执行的操作。 
+
 中断指令：  
 >>to  
