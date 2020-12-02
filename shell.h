@@ -88,8 +88,15 @@ private:
 			break;
 		}
 		case command::rel: {
-			unsigned short i = operand2[0] - 48;
-			os.Release(*os.rid2r(operand1),i);
+			unsigned short i = 0;
+			for (unsigned short j = 0; j < operand2.size(); j++)
+			{
+				i=i*10+ operand2[0] - 48;
+			}
+			if (os.Release(*os.rid2r(operand1),i))
+			{
+				std::cout << "* Resource has been released.\n";
+			}
 			break;
 		}
 		case command::to: {
