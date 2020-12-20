@@ -2,6 +2,6 @@
 
 int main() {
 	shell shell;
-	shell.display();
+	shell.run();
 	return 0;
 }
