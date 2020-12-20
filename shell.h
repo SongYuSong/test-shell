@@ -55,12 +55,12 @@ private:
 		{command::req,{
 			"* req: request resource. [req rid num]\n",
 			"! command req need 2 parameter\n",
-			"[req rid num] rid is resource's name, one of R1,R2,R3,R4. num is needed number\n"
+			"[req rid num] rid is resource's name, one of r1,r2,r3,r4. num is needed number\n"
 		}},
 		{command::rel,{
 			"* rel: release resource. [rel rid num]\n",
 			"! command rel need 2 parameter\n",
-			"[rel rid num] rid is resource's name, one of R1,R2,R3,R4. num is needed number\n"
+			"[rel rid num] rid is resource's name, one of r1,r2,r3,r4. num is needed number\n"
 		}},
 		{command::to,{
 			"* to: time out. [to]\n",
