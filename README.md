@@ -12,6 +12,7 @@ void Create(process* father_process, const std::string& pid, const unsigned int&
 process* Create(const std::string& pid, const unsigned int& priority);//创造进程  
 void Destory(process* p);//销毁进程  
 void Display_list(const std::string& str);//在终端显示状态列表  
+void Display_running();//打印running进程 
 
 
 
@@ -20,8 +21,10 @@ void Display_list(const std::string& str);//在终端显示状态列表
 
 测试的shell：
 
-运行后输入help可以获取命令列表  
+输入init初始化  
+输入help可以获取命令列表  
 结束运行时输入exit命令可以终止shell。  
+在初始化前只能使用help和exit指令  
 
 创建进程的方法：  
 >>1.cr pid priority 比如：cr  p1 1 即为创建了一个pid为p1的用户级进程。  
