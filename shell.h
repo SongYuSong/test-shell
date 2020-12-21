@@ -139,6 +139,7 @@ private:
 		if (!param_num(command::de, 1, 1))return WRONG_PARAMS;
 		os.Destory(os.pid2p(params[0]));
 		std::cout << "* Process " << params[0] << " and it's children were successfully destroyed\n";
+		if (params[0] == "init") init = NULL;
 		os.Display_running();
 		return NORMAL;
 	}

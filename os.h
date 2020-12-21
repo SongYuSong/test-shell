@@ -287,7 +287,9 @@ public:
 	}
 	//显示running进程
 	void Display_running() {
-		std::cout << "* process " << running_list[0]->pid << " is running\n";
+		if (!running_list.empty()) {
+			std::cout << "* process " << running_list[0]->pid << " is running\n";
+		}
 	}
 };
 void os::Scheduler() {
