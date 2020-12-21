@@ -73,11 +73,11 @@ private:
 		std::cout << std::endl;
 	}
 	void Display_Vector(std::vector<resource*>& list) {
-		for (unsigned int i = 0; i < list.size(); i++) {
-			if(list[i]->status!=0)
-				std::cout << list[i]->rid << " ";
-		}
 		std::cout << std::endl;
+		for (unsigned int i = 0; i < list.size(); i++) {
+			if (list[i]->status != 0)
+				std::cout << list[i]->rid << " " << list[i]->status << "/" << list[i]->totalnum << std::endl;
+		}
 	}
 	//同上
 	void Display_Vector(std::vector<std::string>& list) {
@@ -148,10 +148,14 @@ public:
 			return resource_list[i];
 		}
 		else
+			std::cout << "X resource '" << rid << "' not found\n"
+					  << "! use [list resource] to see uesable resources\n";
 			return NULL;
 	}
 	//请求资源
-	bool Request(resource& r, const unsigned int& n) {//资源申请
+	bool Request(resource* re, const unsigned int& n) {//资源申请
+		if (re == NULL)return false;
+		resource& r = *re;
 		if (n > r.totalnum) {
 			std::cout << "The number of request exceeds the total.\n";
 			return false;
@@ -178,7 +182,9 @@ public:
 		}
 	}
 	//释放资源
-	bool Release(resource& r, const unsigned int& n) {
+	bool Release(resource* re, const unsigned int& n) {
+		if (re == NULL)return false;
+		resource& r = *re;
 		process* p = running_list.front();
 		if (!p->other_resources.empty()) {
 			unsigned short i=0;
@@ -200,18 +206,21 @@ public:
 		return false;
 	}
 	//模拟中断
-	void time_out() { //模拟中断：找到running_list中的头部进程，将其移除放入ready_list中，将进程的状态调整为就绪
-		for (int i = 2; i >= 0; i--) {
+	bool time_out(bool display=false) { //模拟中断：找到running_list中的头部进程，将其移除放入ready_list中，将进程的状态调整为就绪
+		for (int i = 2; i > 0; i--) {
 			if (!ready_list[i].empty()) {
 				ready_list[i].front()->status = running;
+				if(display)std::cout << "* process " << ready_list[i].front()->pid << " is running\n";
 				running_list.push_back(ready_list[i].front());
 				ready_list[i].erase(ready_list[i].begin());
 				running_list.front()->status = ready;
+				if(display)std::cout << "* process " << running_list.front()->pid << " is ready\n";
 				ready_list[running_list.front()->priority].push_back(running_list.front());
 				running_list.erase(running_list.begin());
-				break;
+				return true;
 			}
 		}
+		return false;
 	}
 	//创造进程
 	void Create(process* father_process, const std::string& pid, const unsigned int& priority) {//创造一个进程，有两个重载，分别生成根节点与子节点。
@@ -275,6 +284,10 @@ public:
 			std::cout << "* resource_list: ";
 			Display_Vector(resource_list);
 		}
+	}
+	//显示running进程
+	void Display_running() {
+		std::cout << "* process " << running_list[0]->pid << " is running\n";
 	}
 };
 void os::Scheduler() {
